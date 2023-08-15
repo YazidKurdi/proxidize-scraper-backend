@@ -1,6 +1,7 @@
 import time
 
 from selenium import webdriver
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -46,22 +47,27 @@ class EcommerceScraper:
         # Now that scrolling is done, get the desired number of elements to scrape
         return elements[:min(min_rows_to_scrape, len(elements))]
 
-    def save_scrape_result(self, data):
+    def save_scrape_result(self, data,request):
         product_title = data["product_title"]
         img_element = data["image"]
         info_texts = data["info"]
         price_full = data["price"]
-        custom_id = f"{product_title}_{price_full}_{img_element}"
-        data["custom_id"] = custom_id
+        custom_id = f"{product_title}_{price_full}_{img_element}_{request.user.id}"
 
-        serializer = ScrapeResultSerializer(data=data)
+        instance_data = {
+            **data,
+            "custom_id": custom_id,
+            "user": request.user.id,
+        }
+
+        serializer = ScrapeResultSerializer(data=instance_data)
         if serializer.is_valid():
             if not ScrapeResult.objects.filter(custom_id=custom_id).exists():
                 serializer.save(custom_id=custom_id)
                 return True
         return False
 
-    def scrape_website(self, keyword,rows):
+    def scrape_website(self, request,keyword,rows):
         try:
             elements = self.get_elements_to_scrape(keyword,rows)
 
@@ -78,10 +84,9 @@ class EcommerceScraper:
                     "price": price_full
                 }
 
-                if self.save_scrape_result(data):
+                if self.save_scrape_result(data,request):
                     new_added_count += 1
                 else:
-                    print(data)
                     duplicate_count += 1
                 scraped_data.append(data)
 
@@ -98,8 +103,8 @@ class EcommerceScraper:
 
             return response_data
 
-        except Exception as e:
-            return {"error": str(e)}
+        # except Exception as e:
+        #     return {"error": str(e)}
 
         finally:
             self.driver.quit()
@@ -113,18 +118,40 @@ class EcommerceScraper:
     #         print(element.find_element(By.CLASS_NAME,'product-title__title').text)
     #     return self.driver.find_elements(By.CLASS_NAME, 'product-tile__item--spacer')[12:]
 
+    # def extract_product_info(self, element):
+    #
+    #     wait = WebDriverWait(element, 10)
+    #
+    #     title_element = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'product-title__title'))).get_attribute("textContent").strip()
+    #     img_element = wait.until(
+    #         EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.image.image--contain')))[2].get_attribute("src")
+    #     tag_element = element.find_element(By.CLASS_NAME, 'product-title__info')
+    #
+    #     if tag_element:
+    #         info_texts = [info_span.text.strip() for info_span in tag_element.find_elements(By.TAG_NAME, 'span')]
+    #     else:
+    #         info_texts = []
+    #
+    #     price_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.price_alignment')))
+    #     price_currency = price_element.find_element(By.CLASS_NAME, 'price__currency').get_attribute(
+    #         "textContent").strip()
+    #     price_amount = price_element.find_element(By.XPATH, './span[2]').get_attribute("textContent").strip()
+    #     price_full = f"{price_currency} {price_amount}"
+    #
+    #     return title_element, img_element, info_texts, price_full
+
     def extract_product_info(self, element):
+        title_element = element.find_element(By.CLASS_NAME, 'product-title__title').get_attribute("textContent").strip()
+        img_elements = element.find_elements(By.CSS_SELECTOR, '.image.image--contain')
+        img_element = img_elements[2].get_attribute("src")
 
-        wait = WebDriverWait(element, 10)
+        try:
+            tag_element = element.find_element(By.CLASS_NAME, 'product-title__info')
+            info_texts = [info_span.text.strip() for info_span in tag_element.find_elements(By.TAG_NAME, 'span')]
+        except NoSuchElementException:
+            info_texts = []
 
-        title_element = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'product-title__title'))).get_attribute("textContent").strip()
-        img_element = wait.until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.image.image--contain')))[2].get_attribute("src")
-        tag_element = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'product-title__info')))
-
-        info_texts = [info_span.text.strip() for info_span in tag_element.find_elements(By.TAG_NAME, 'span')]
-
-        price_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.price_alignment')))
+        price_element = element.find_element(By.CSS_SELECTOR, '.price_alignment')
         price_currency = price_element.find_element(By.CLASS_NAME, 'price__currency').get_attribute(
             "textContent").strip()
         price_amount = price_element.find_element(By.XPATH, './span[2]').get_attribute("textContent").strip()
