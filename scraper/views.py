@@ -12,6 +12,7 @@ from .scraper import EcommerceScraper
 
 
 class ProductScrapeView(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request, format=None):
         serializer = KeywordSerializer(data=request.data)
         if not serializer.is_valid():
@@ -24,7 +25,7 @@ class ProductScrapeView(APIView):
         scraper = EcommerceScraper()
 
         # Call the scrape_website method of the EcommerceScraper instance
-        scraped_data = scraper.scrape_website(keyword,rows)
+        scraped_data = scraper.scrape_website(self.request,keyword,rows)
 
         return Response(scraped_data, status=status.HTTP_200_OK)
 
@@ -33,7 +34,7 @@ class UserScrapeResultListView(ListAPIView):
     serializer_class = ScrapeResultSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = StandardResultsSetPagination
-    filter_backends = [SearchFilter]  # Add SearchFilter backend
+    filter_backends = [SearchFilter]
     search_fields = ['product_title']  # Specify fields to search
 
     def get_queryset(self):
