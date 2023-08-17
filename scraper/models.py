@@ -6,7 +6,7 @@ User = get_user_model()
 
 class ScrapeResult(models.Model):
 
-    custom_id = models.CharField(max_length=255, unique=True)
+    custom_id = models.CharField(max_length=500, unique=True)
     product_title = models.CharField(max_length=200)
     image = models.URLField(null=True,blank=True)
     info = models.TextField(null=True,blank=True)
