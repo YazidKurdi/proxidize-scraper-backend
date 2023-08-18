@@ -76,7 +76,7 @@ class EcommerceScraper:
         # wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'button__contrylangSelector')))
         #
         # self.driver.find_element(By.CLASS_NAME, 'button__contrylangSelector').click()
-        # time.sleep(1)
+        time.sleep(5)
         # self.driver.find_element(By.CLASS_NAME, 'p16').click()
 
 
