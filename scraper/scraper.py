@@ -73,7 +73,7 @@ class EcommerceScraper:
         url = f'https://www.jarir.com/sa-en/catalogsearch/result?search={keyword}'
         self.driver.get(url)
         print(self.driver.page_source)
-        wait = WebDriverWait(self.driver, 10)
+        # wait = WebDriverWait(self.driver, 10)
         # wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'button__contrylangSelector')))
         #
         # self.driver.find_element(By.CLASS_NAME, 'button__contrylangSelector').click()
@@ -81,11 +81,13 @@ class EcommerceScraper:
         # self.driver.find_element(By.CLASS_NAME, 'p16').click()
 
 
-        vue_carousel_element = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'VueCarousel')))
+        # vue_carousel_element = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'VueCarousel')))
         last_height = self.driver.execute_script("return document.body.scrollHeight")
 
         while True:
             elements = self.driver.find_elements(By.CLASS_NAME, 'product-tile__item--spacer')[12:]
+            print(elements)
+            print(len(elements))
             if len(elements) >= min_rows_to_scrape:
                 break
 
