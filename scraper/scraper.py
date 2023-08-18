@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 
 from scraper.models import ScrapeResult
 from scraper.serializers import ScrapeResultSerializer
@@ -17,7 +18,10 @@ class EcommerceScraper:
         Initializes an instance of the EcommerceScraper class with a Chrome WebDriver.
         The WebDriver is used to interact with a web browser and scrape data from a website.
         """
-        self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("no-sandbox")
+        self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
         self.driver.maximize_window()
 
     def scrape_website(self, request,keyword,rows):
