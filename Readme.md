@@ -13,8 +13,10 @@ Scraping using static libraries that fetch the initial HTML is not suitable as t
 
 Dockerfile is used to utilize the selenium standalone image
 
+Running @ [Backend](https://proxidize-scraper-backend-production.up.railway.app/)
+
 # Limitations
 Current scraping implementation takes at least (2 * Number of rows specified)
+
 A maximum of 30 rows can be scraped at a time as the server's RAM is limited
 
-Running @ [Backend](https://proxidize-scraper-backend-production.up.railway.app/)
