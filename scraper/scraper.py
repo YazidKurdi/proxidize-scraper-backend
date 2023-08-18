@@ -76,11 +76,11 @@ class EcommerceScraper:
         self.driver.get(url)
         # print(self.driver.page_source)
         wait = WebDriverWait(self.driver, 20)
-        wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'button__contrylangSelector')))
+        # wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'button__contrylangSelector')))
         #
-        self.driver.find_element(By.CLASS_NAME, 'button__contrylangSelector').click()
+        # self.driver.find_element(By.CLASS_NAME, 'button__contrylangSelector').click()
         # time.sleep(5)
-        self.driver.find_element(By.CLASS_NAME, 'p16').click()
+        # self.driver.find_element(By.CLASS_NAME, 'p16').click()
 
 
         vue_carousel_element = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'VueCarousel')))
