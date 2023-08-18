@@ -22,7 +22,6 @@ class EcommerceScraper:
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("no-sandbox")
         self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
-        self.driver.maximize_window()
 
     def scrape_website(self, request,keyword,rows):
         try:
@@ -74,11 +73,11 @@ class EcommerceScraper:
         url = f'https://www.jarir.com/sa-en/catalogsearch/result?search={keyword}'
         self.driver.get(url)
         wait = WebDriverWait(self.driver, 10)
-        wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'button__contrylangSelector')))
-
-        self.driver.find_element(By.CLASS_NAME, 'button__contrylangSelector').click()
-        time.sleep(1)
-        self.driver.find_element(By.CLASS_NAME, 'p16').click()
+        # wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'button__contrylangSelector')))
+        #
+        # self.driver.find_element(By.CLASS_NAME, 'button__contrylangSelector').click()
+        # time.sleep(1)
+        # self.driver.find_element(By.CLASS_NAME, 'p16').click()
 
 
         vue_carousel_element = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'VueCarousel')))
