@@ -19,11 +19,11 @@ class EcommerceScraper:
         The WebDriver is used to interact with a web browser and scrape data from a website.
         """
         chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--remote-debugging-port=9222")
+        # chrome_options.add_argument("--headless")
+        # chrome_options.add_argument("--disable-dev-shm-usage")
+        # chrome_options.add_argument('--no-sandbox')
+        # chrome_options.add_argument("--disable-gpu")
+        # chrome_options.add_argument("--remote-debugging-port=9222")
         self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
 
     def scrape_website(self, request,keyword,rows):
@@ -87,7 +87,7 @@ class EcommerceScraper:
                 break
 
             # Scroll down to the bottom of the page
-            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            self.driver.execute_script("window.scrollBy(0, 1400);")
             time.sleep(2)
 
             new_height = self.driver.execute_script("return document.body.scrollHeight")
