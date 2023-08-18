@@ -4,7 +4,7 @@ from .models import ScrapeResult
 
 class KeywordSerializer(serializers.Serializer):
     keyword = serializers.CharField(max_length=100)
-    rows = serializers.IntegerField(min_value=1,max_value=50)
+    rows = serializers.IntegerField(min_value=1,max_value=30)
 
 class ScrapeResultSerializer(serializers.ModelSerializer):
 
